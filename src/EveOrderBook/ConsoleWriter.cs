@@ -1,4 +1,6 @@
-﻿namespace EveOrderBook
+﻿using System.Globalization;
+
+namespace EveOrderBook
 {
     public static class ConsoleWriter
     {
@@ -56,27 +58,31 @@
         }
 
         public static string ToShortIsk(decimal number) {
-            string result;
+            return ToShortIsk(number, CultureInfo.CurrentCulture);
+        }
 
-            if (number < 1_000m) {
-                result = $"{number:#,##0.00} ISK";
-            }
-            else if (number < 1_000_000m) {
+        public static string ToShortIsk(decimal number, CultureInfo cultureInfo) {
+            string suffix = "";
+
+            if (number >= 1_000m && number < 1_000_000m) {
+                suffix = "k";
                 number = number / 1_000m;
-                result = $"{number:#,##0.00}k ISK";
             }
-            else if (number < 1_000_000_000m) {
+            else if (number >= 1_000_000m && number < 1_000_000_000m) {
+                suffix = "m";
                 number = number / 1_000_000m;
-                result = $"{number:#,##0.00}m ISK";
             }
-            else if (number < 1_000_000_000_000m) {
+            else if (number >= 1_000_000_000m && number < 1_000_000_000_000m) {
+                suffix = "b";
                 number = number / 1_000_000_000m;
-                result = $"{number:#,##0.00}b ISK";
             }
-            else {
+            else if (number >= 1_000_000_000_000m) {
+                suffix = "t";
                 number = number / 1_000_000_000_000m;
-                result = $"{number:#,##0.00}t ISK";
             }
+
+            string numberShortForm = number.ToString("N2", cultureInfo);
+            string result = $"{numberShortForm}{suffix} ISK";
 
             return result;
         }
