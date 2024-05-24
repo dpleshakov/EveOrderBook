@@ -40,15 +40,15 @@ The application can be configured via the `config.json` file in the same directo
 ## Example Output
 
 ```
------------------------------------------------
-| Item Name       | Best Buy   | Best Sell   |
------------------------------------------------
-| Tritanium       | 4.50 ISK   | 5.00 ISK    |
-| Pyerite         | 7.20 ISK   | 8.00 ISK    |
-| Mexallon        | 70.00 ISK  | 75.00 ISK   |
------------------------------------------------
-Potential Profit: 1,000,000 ISK
-Profit Margin: 10%
+Top order, 1 quantity
+--------------------------------------
+         |          Buy |         Sell
+--------------------------------------
+   Price |    1,04m ISK |    1,47m ISK
+   Total |    1,04m ISK |    1,39m ISK
+--------------------------------------
+  Profit |  346,53k ISK |
+  Margin |       33,19% |
 ```
 
 ## Contributions
