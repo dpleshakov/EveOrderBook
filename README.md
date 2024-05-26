@@ -17,10 +17,11 @@ The application can be configured via the `config.json` file in the same directo
 
 ```json
 {
-  "StationId": "YourStationIdHere",
+  "StationId": "60003760", // "60003760" for Jita IV - Moon 4 CNAP
   "BuyBrokerFee": 3.00,
   "SellBrokerFee": 3.00,
-  "SellTax": 8.00
+  "SellTax": 8.00,
+  "HelpMessageFormat": "full" // full, short, hide
 }
 ```
 
@@ -28,6 +29,7 @@ The application can be configured via the `config.json` file in the same directo
 - `BuyBrokerFee`: The broker fee percentage applied when placing buy orders.
 - `SellBrokerFee`: The broker fee percentage applied when placing sell orders.
 - `SellTax`: The tax percentage applied when selling items on the market.
+- `HelpMessageFormat`: The format of the welcome help message.
 
 ## Usage
 
@@ -39,7 +41,7 @@ The application can be configured via the `config.json` file in the same directo
 
 ## Example Output
 
-```
+```text
 Top order, 1 quantity
 --------------------------------------
          |          Buy |         Sell
