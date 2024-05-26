@@ -1,7 +1,7 @@
 {
-  "StationId": "60003760",
+  "StationId": "60003760", // "60003760" for Jita IV - Moon 4 CNAP
   "BuyBrokerFee": 3.00,
   "SellBrokerFee": 3.00,
   "SellTax": 8.00,
-  "SkipHelpMessage": false
+  "HelpMessageFormat": "full", // full, short, hide
 }

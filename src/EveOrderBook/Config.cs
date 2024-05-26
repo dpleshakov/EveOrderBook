@@ -10,6 +10,6 @@
 
         public decimal SellTax { get; init; }
 
-        public bool SkipHelpMessage {  get; init; }
+        public string HelpMessageFormat { get; init; }
     }
 }
