@@ -4,11 +4,11 @@ namespace EveOrderBook
 {
     internal sealed class Marketlogs
     {
+        public readonly string SourceMarketlogsDirectory;
+
         private readonly Taxes Taxes;
 
         private readonly string StationId;
-
-        private readonly string SourceMarketlogsDirectory;
 
         private readonly FileSystemWatcher SourceMarketlogsWatcher;
 
