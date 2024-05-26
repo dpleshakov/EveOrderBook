@@ -41,7 +41,7 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: EveOrderBook ${{ matrix.publishprofile }}
+        name: EveOrderBook.${{ matrix.publishprofile }}
         path: |
           src/EveOrderBook/bin/Release/net8.0/win-${{ matrix.publishprofile }}/EveOrderBook.exe
           src/EveOrderBook/bin/Release/net8.0/win-${{ matrix.publishprofile }}/Config.json
