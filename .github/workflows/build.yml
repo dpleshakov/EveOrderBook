@@ -43,5 +43,5 @@ jobs:
       with:
         name: EveOrderBook ${{ matrix.publishprofile }}
         path: |
-          src\EveOrderBook\bin\Release\net8.0\win-${{ matrix.publishprofile }}\publish\EveOrderBook.exe
-          src\EveOrderBook\bin\Release\net8.0\win-${{ matrix.publishprofile }}\publish\Config.json
+          src/EveOrderBook/bin/Release/net8.0/win-${{ matrix.publishprofile }}/EveOrderBook.exe
+          src/EveOrderBook/bin/Release/net8.0/win-${{ matrix.publishprofile }}/Config.json
