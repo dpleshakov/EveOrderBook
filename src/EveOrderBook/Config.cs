@@ -9,5 +9,7 @@
         public decimal SellBrokerFee { get; init; }
 
         public decimal SellTax { get; init; }
+
+        public bool SkipHelpMessage {  get; init; }
     }
 }

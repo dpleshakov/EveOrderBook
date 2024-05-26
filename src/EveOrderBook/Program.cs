@@ -19,7 +19,12 @@
 
             Marketlogs marketlogs = new Marketlogs(config.StationId, taxes);
 
-            WriteHelpToConsole(configPath, taxes, config.StationId, marketlogs.SourceMarketlogsDirectory);
+            if (!config.SkipHelpMessage) {
+                WriteHelpToConsole(configPath, taxes, config.StationId, marketlogs.SourceMarketlogsDirectory);
+            }
+            else {
+                marketlogs.WriteProfitMarginToConsole();
+            }
 
             marketlogs.StartWatch();
 
