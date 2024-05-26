@@ -9,7 +9,7 @@
                 Console.WriteLine($"Error: missing configuration file '{configPath}'");
             }
 
-            Config config = ConfigReader.Read(configPath);
+            Config config = Config.Read(configPath);
 
             Taxes taxes = new Taxes {
                 BuyBrokerFee = config.BuyBrokerFee,
