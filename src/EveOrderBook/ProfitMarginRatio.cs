@@ -1,10 +1,9 @@
-﻿namespace EveOrderBook
+﻿namespace EveOrderBook;
+
+public enum ProfitMarginRatio
 {
-    public enum ProfitMarginRatio
-    {
-        Bad,
-        Normal,
-        Good,
-        VeryGood,
-    }
+    Bad,
+    Normal,
+    Good,
+    VeryGood,
 }

@@ -1,28 +1,31 @@
 ﻿using System.Text.Json;
 
-namespace EveOrderBook
+namespace EveOrderBook;
+
+internal readonly struct Config
 {
-    internal readonly struct Config
-    {
-        private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions {
-            AllowTrailingCommas = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-        };
+    public static readonly string DefaultConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "Config.json");
 
-        public static Config Read(string configPath) {
-            using FileStream configStream = File.OpenRead(configPath);
-            Config config = JsonSerializer.Deserialize<Config>(configStream, SerializerOptions);
-            return config;
-        }
+    private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions {
+        AllowTrailingCommas = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+    };
 
-        public string StationId { get; init; }
-
-        public decimal BuyBrokerFee { get; init; }
-
-        public decimal SellBrokerFee { get; init; }
-
-        public decimal SellTax { get; init; }
-
-        public string HelpMessageFormat { get; init; }
+    public static Config Read(FileInfo configFile) {
+        using FileStream configStream = configFile.OpenRead();
+        Config config = JsonSerializer.Deserialize<Config>(configStream, SerializerOptions);
+        return config;
     }
+
+    public static Config Read(string configPath) {
+        return Read(new FileInfo(configPath));
+    }
+
+    public decimal BuyBrokerFee { get; init; }
+
+    public decimal SellBrokerFee { get; init; }
+
+    public decimal SellTax { get; init; }
+
+    public string StationId { get; init; }
 }

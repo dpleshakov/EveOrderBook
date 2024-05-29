@@ -1,131 +1,131 @@
 ﻿using System.Globalization;
 
-namespace EveOrderBook
+namespace EveOrderBook;
+
+internal sealed class Marketlogs
 {
-    internal sealed class Marketlogs
-    {
-        public readonly string SourceMarketlogsDirectory;
+    public static readonly string DefaultMarketlogsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "EVE", "logs", "Marketlogs");
 
-        private readonly Taxes Taxes;
+    public readonly string SourceMarketlogsDirectory;
 
-        private readonly string StationId;
+    private readonly Taxes Taxes;
 
-        private readonly FileSystemWatcher SourceMarketlogsWatcher;
+    private readonly string StationId;
 
-        public Marketlogs(string statiodId, Taxes taxes, string? sourceMarketlogsDirectory = null) {
-            StationId = statiodId;
-            Taxes = taxes;
+    private readonly FileSystemWatcher SourceMarketlogsWatcher;
 
-            if (!string.IsNullOrEmpty(sourceMarketlogsDirectory)) {
-                SourceMarketlogsDirectory = sourceMarketlogsDirectory;
-            }
-            else {
-                string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                SourceMarketlogsDirectory = Path.Combine(documentsPath, "EVE", "logs", "Marketlogs");
-            }
+    public Marketlogs(string statiodId, Taxes taxes, string? sourceMarketlogsDirectory = null) {
+        StationId = statiodId;
+        Taxes = taxes;
 
-            SourceMarketlogsWatcher = new FileSystemWatcher();
-
-            SourceMarketlogsWatcher.Path = SourceMarketlogsDirectory;
-            SourceMarketlogsWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            SourceMarketlogsWatcher.Filter = "*.txt";
-
-            SourceMarketlogsWatcher.Created += new FileSystemEventHandler(OnChanged);
+        if (!string.IsNullOrEmpty(sourceMarketlogsDirectory)) {
+            SourceMarketlogsDirectory = sourceMarketlogsDirectory;
+        }
+        else {
+            SourceMarketlogsDirectory = DefaultMarketlogsPath;
         }
 
-        public void StartWatch() {
-            SourceMarketlogsWatcher.EnableRaisingEvents = true;
+        SourceMarketlogsWatcher = new FileSystemWatcher();
+
+        SourceMarketlogsWatcher.Path = SourceMarketlogsDirectory;
+        SourceMarketlogsWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+        SourceMarketlogsWatcher.Filter = "*.txt";
+
+        SourceMarketlogsWatcher.Created += new FileSystemEventHandler(OnChanged);
+    }
+
+    public void StartWatch() {
+        SourceMarketlogsWatcher.EnableRaisingEvents = true;
+    }
+
+    public void StopWatch() {
+        SourceMarketlogsWatcher.EnableRaisingEvents = false;
+    }
+
+    public void WriteProfitMarginToConsole() {
+        string? marketlogsPath = GetLastFile(SourceMarketlogsDirectory);
+        if (marketlogsPath == null) {
+            return;
         }
 
-        public void StopWatch() {
-            SourceMarketlogsWatcher.EnableRaisingEvents = false;
+        IEnumerable<MarketOrder> orders = ReadOrders(marketlogsPath);
+
+        IEnumerable<MarketOrder> buyOrders = FilterBuyOrders(orders);
+        IEnumerable<MarketOrder> sellOrders = FilterSellOrders(orders);
+
+        MarketOrder topBuyOrder = buyOrders.OrderByDescending(order => order.Price).First();
+        MarketOrder topSellOrder = sellOrders.OrderBy(order => order.Price).First();
+
+        Console.Clear();
+
+        {
+            ProfitMargin margin = ProfitMarginCalculator.Calculate(topBuyOrder.Price, topSellOrder.Price, quantity: 1, Taxes);
+
+            Console.WriteLine("Top order, 1 quantity");
+            ConsoleWriter.Write(margin);
+        }
+    }
+
+    private IEnumerable<MarketOrder> FilterBuyOrders(IEnumerable<MarketOrder> orders) {
+        IEnumerable<MarketOrder> buyOrder = orders.Where(order => order.Bid == true);
+        buyOrder = buyOrder.Where(order => order.StationID == StationId || order.Jumps <= order.Range);
+
+        return buyOrder;
+    }
+
+    private IEnumerable<MarketOrder> FilterSellOrders(IEnumerable<MarketOrder> orders) {
+        IEnumerable<MarketOrder> sellOrder = orders.Where(order => order.Bid == false);
+        sellOrder = sellOrder.Where(order => order.StationID == StationId);
+
+        return sellOrder;
+    }
+
+    private void OnChanged(object source, FileSystemEventArgs e) {
+        Thread.Sleep(500);
+        WriteProfitMarginToConsole();
+    }
+
+    private static string? GetLastFile(string directoryPath) {
+        DirectoryInfo directory = new DirectoryInfo(directoryPath);
+        IEnumerable<FileInfo> files = directory.GetFiles().OrderByDescending(f => f.LastWriteTime);
+
+        string? lastWriteTimeFilePath = null;
+        if (files.Any()) {
+            lastWriteTimeFilePath = files.First().FullName;
         }
 
-        public void WriteProfitMarginToConsole() {
-            string? marketlogsPath = GetLastFile(SourceMarketlogsDirectory);
-            if (marketlogsPath == null) {
-                return;
-            }
+        return lastWriteTimeFilePath;
+    }
 
-            IEnumerable<MarketOrder> orders = ReadOrders(marketlogsPath);
+    private static IEnumerable<MarketOrder> ReadOrders(string marketlogPath) {
+        IEnumerable<string> lines = File.ReadAllLines(marketlogPath);
+        lines = lines.Skip(1);
 
-            IEnumerable<MarketOrder> buyOrders = FilterBuyOrders(orders);
-            IEnumerable<MarketOrder> sellOrders = FilterSellOrders(orders);
+        List<MarketOrder> orders = [];
 
-            MarketOrder topBuyOrder = buyOrders.OrderByDescending(order => order.Price).First();
-            MarketOrder topSellOrder = sellOrders.OrderBy(order => order.Price).First();
+        foreach (string line in lines) {
+            string[] values = line.Split(',');
 
-            Console.Clear();
+            MarketOrder order = new() {
+                Price = decimal.Parse(values[0], CultureInfo.InvariantCulture.NumberFormat),
+                VolRemaining = values[1],
+                TypeID = values[2],
+                Range = int.Parse(values[3]),
+                OrderID = values[4],
+                VolEntered = values[5],
+                MinVolume = values[6],
+                Bid = bool.Parse(values[7]),
+                IssueDate = values[8],
+                Duration = values[9],
+                StationID = values[10],
+                RegionID = values[11],
+                SolarSystemID = values[12],
+                Jumps = uint.Parse(values[13]),
+            };
 
-            {
-                ProfitMargin margin = ProfitMarginCalculator.Calculate(topBuyOrder.Price, topSellOrder.Price, quantity: 1, Taxes);
-
-                Console.WriteLine("Top order, 1 quantity");
-                ConsoleWriter.Write(margin);
-            }
+            orders.Add(order);
         }
 
-        private IEnumerable<MarketOrder> FilterBuyOrders(IEnumerable<MarketOrder> orders) {
-            IEnumerable<MarketOrder> buyOrder = orders.Where(order => order.Bid == true);
-            buyOrder = buyOrder.Where(order => order.StationID == StationId || order.Jumps <= order.Range);
-
-            return buyOrder;
-        }
-
-        private IEnumerable<MarketOrder> FilterSellOrders(IEnumerable<MarketOrder> orders) {
-            IEnumerable<MarketOrder> sellOrder = orders.Where(order => order.Bid == false);
-            sellOrder = sellOrder.Where(order => order.StationID == StationId);
-
-            return sellOrder;
-        }
-
-        private void OnChanged(object source, FileSystemEventArgs e) {
-            Thread.Sleep(500);
-            WriteProfitMarginToConsole();
-        }
-
-        private static string? GetLastFile(string directoryPath) {
-            DirectoryInfo directory = new DirectoryInfo(directoryPath);
-            IEnumerable<FileInfo> files = directory.GetFiles().OrderByDescending(f => f.LastWriteTime);
-
-            string? lastWriteTimeFilePath = null;
-            if (files.Any()) {
-                lastWriteTimeFilePath = files.First().FullName;
-            }
-
-            return lastWriteTimeFilePath;
-        }
-
-        private static IEnumerable<MarketOrder> ReadOrders(string marketlogPath) {
-            IEnumerable<string> lines = File.ReadAllLines(marketlogPath);
-            lines = lines.Skip(1);
-
-            List<MarketOrder> orders = [];
-
-            foreach (string line in lines) {
-                string[] values = line.Split(',');
-
-                MarketOrder order = new() {
-                    Price = decimal.Parse(values[0], CultureInfo.InvariantCulture.NumberFormat),
-                    VolRemaining = values[1],
-                    TypeID = values[2],
-                    Range = int.Parse(values[3]),
-                    OrderID = values[4],
-                    VolEntered = values[5],
-                    MinVolume = values[6],
-                    Bid = bool.Parse(values[7]),
-                    IssueDate = values[8],
-                    Duration = values[9],
-                    StationID = values[10],
-                    RegionID = values[11],
-                    SolarSystemID = values[12],
-                    Jumps = uint.Parse(values[13]),
-                };
-
-                orders.Add(order);
-            }
-
-            return orders;
-        }
+        return orders;
     }
 }

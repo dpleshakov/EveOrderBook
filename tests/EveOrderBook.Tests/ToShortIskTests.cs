@@ -1,99 +1,85 @@
 ﻿using System.Globalization;
 
-namespace EveOrderBook.Tests
+namespace EveOrderBook.Tests;
+
+[TestClass()]
+public class ToShortIskTests
 {
-    [TestClass()]
-    public class ToShortIskTests
-    {
-        [TestMethod()]
-        public void ToShortIskLessOneThousand() {
-            Assert.AreEqual("0.00 ISK", ConsoleWriter.ToShortIsk(0m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.00 ISK", ConsoleWriter.ToShortIsk(1m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("99.00 ISK", ConsoleWriter.ToShortIsk(99m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00 ISK", ConsoleWriter.ToShortIsk(100m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("101.00 ISK", ConsoleWriter.ToShortIsk(101m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("234.56 ISK", ConsoleWriter.ToShortIsk(234.56m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("999.00 ISK", ConsoleWriter.ToShortIsk(999m, CultureInfo.InvariantCulture));
-        }
-
-        [TestMethod()]
-        public void ToShortIskLessOneMillion() {
-            Assert.AreEqual("1.00k ISK", ConsoleWriter.ToShortIsk(1_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.00k ISK", ConsoleWriter.ToShortIsk(1_001m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.01k ISK", ConsoleWriter.ToShortIsk(1_010m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.10k ISK", ConsoleWriter.ToShortIsk(1_100m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.99k ISK", ConsoleWriter.ToShortIsk(1_990m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("2.00k ISK", ConsoleWriter.ToShortIsk(1_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("9.99k ISK", ConsoleWriter.ToShortIsk(9_990m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00k ISK", ConsoleWriter.ToShortIsk(9_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00k ISK", ConsoleWriter.ToShortIsk(10_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00k ISK", ConsoleWriter.ToShortIsk(10_001m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("99.99k ISK", ConsoleWriter.ToShortIsk(99_990m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00k ISK", ConsoleWriter.ToShortIsk(99_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00k ISK", ConsoleWriter.ToShortIsk(100_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00k ISK", ConsoleWriter.ToShortIsk(100_001m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("567.89k ISK", ConsoleWriter.ToShortIsk(567_890m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("999.99k ISK", ConsoleWriter.ToShortIsk(999_990m, CultureInfo.InvariantCulture));
-        }
-
-        [TestMethod()]
-        public void ToShortIskLessOneBillion() {
-            Assert.AreEqual("1.00m ISK", ConsoleWriter.ToShortIsk(1_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.00m ISK", ConsoleWriter.ToShortIsk(1_001_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.01m ISK", ConsoleWriter.ToShortIsk(1_010_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.10m ISK", ConsoleWriter.ToShortIsk(1_100_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.99m ISK", ConsoleWriter.ToShortIsk(1_990_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("2.00m ISK", ConsoleWriter.ToShortIsk(1_999_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("9.99m ISK", ConsoleWriter.ToShortIsk(9_990_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00m ISK", ConsoleWriter.ToShortIsk(9_999_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00m ISK", ConsoleWriter.ToShortIsk(10_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00m ISK", ConsoleWriter.ToShortIsk(10_001_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("99.99m ISK", ConsoleWriter.ToShortIsk(99_990_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00m ISK", ConsoleWriter.ToShortIsk(99_999_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00m ISK", ConsoleWriter.ToShortIsk(100_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00m ISK", ConsoleWriter.ToShortIsk(100_001_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("234.56m ISK", ConsoleWriter.ToShortIsk(234_560_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("999.99m ISK", ConsoleWriter.ToShortIsk(999_990_000m, CultureInfo.InvariantCulture));
-        }
-
-        [TestMethod()]
-        public void ToShortIskLessOneTrillion() {
-            Assert.AreEqual("1.00b ISK", ConsoleWriter.ToShortIsk(1_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.00b ISK", ConsoleWriter.ToShortIsk(1_001_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.01b ISK", ConsoleWriter.ToShortIsk(1_010_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.10b ISK", ConsoleWriter.ToShortIsk(1_100_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.99b ISK", ConsoleWriter.ToShortIsk(1_990_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("2.00b ISK", ConsoleWriter.ToShortIsk(1_999_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("9.99b ISK", ConsoleWriter.ToShortIsk(9_990_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00b ISK", ConsoleWriter.ToShortIsk(9_999_999_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00b ISK", ConsoleWriter.ToShortIsk(10_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00b ISK", ConsoleWriter.ToShortIsk(10_001_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("99.99b ISK", ConsoleWriter.ToShortIsk(99_990_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00b ISK", ConsoleWriter.ToShortIsk(99_999_999_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00b ISK", ConsoleWriter.ToShortIsk(100_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00b ISK", ConsoleWriter.ToShortIsk(100_001_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("234.56b ISK", ConsoleWriter.ToShortIsk(234_560_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("999.99b ISK", ConsoleWriter.ToShortIsk(999_990_000_000m, CultureInfo.InvariantCulture));
-        }
-
-        [TestMethod()]
-        public void ToShortIskMoreOneTrillion() {
-            Assert.AreEqual("1.00t ISK", ConsoleWriter.ToShortIsk(1_000_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.00t ISK", ConsoleWriter.ToShortIsk(1_001_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.01t ISK", ConsoleWriter.ToShortIsk(1_010_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.10t ISK", ConsoleWriter.ToShortIsk(1_100_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("1.99t ISK", ConsoleWriter.ToShortIsk(1_990_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("2.00t ISK", ConsoleWriter.ToShortIsk(1_999_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("9.99t ISK", ConsoleWriter.ToShortIsk(9_990_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00t ISK", ConsoleWriter.ToShortIsk(9_999_999_999_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00t ISK", ConsoleWriter.ToShortIsk(10_000_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("10.00t ISK", ConsoleWriter.ToShortIsk(10_001_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("99.99t ISK", ConsoleWriter.ToShortIsk(99_990_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00t ISK", ConsoleWriter.ToShortIsk(99_999_999_999_999m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00t ISK", ConsoleWriter.ToShortIsk(100_000_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("100.00t ISK", ConsoleWriter.ToShortIsk(100_001_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("234.56t ISK", ConsoleWriter.ToShortIsk(234_560_000_000_000m, CultureInfo.InvariantCulture));
-            Assert.AreEqual("999.99t ISK", ConsoleWriter.ToShortIsk(999_990_000_000_000m, CultureInfo.InvariantCulture));
-        }
+    // Decimal type hasn't supported yet, see https://github.com/dotnet/runtime/issues/4525
+    [TestMethod()]
+    [DataRow("0.00 ISK", "0")]
+    [DataRow("1.00 ISK", "1")]
+    [DataRow("99.00 ISK", "99")]
+    [DataRow("100.00 ISK", "100")]
+    [DataRow("101.00 ISK", "101")]
+    [DataRow("234.56 ISK", "234.56")]
+    [DataRow("999.00 ISK", "999")]
+    [DataRow("1.00k ISK", "1000")]
+    [DataRow("1.00k ISK", "1001")]
+    [DataRow("1.01k ISK", "1010")]
+    [DataRow("1.10k ISK", "1100")]
+    [DataRow("1.99k ISK", "1990")]
+    [DataRow("2.00k ISK", "1999")]
+    [DataRow("9.99k ISK", "9990")]
+    [DataRow("10.00k ISK", "9999")]
+    [DataRow("10.00k ISK", "10000")]
+    [DataRow("10.00k ISK", "10001")]
+    [DataRow("99.99k ISK", "99990")]
+    [DataRow("100.00k ISK", "99999")]
+    [DataRow("100.00k ISK", "100000")]
+    [DataRow("100.00k ISK", "100001")]
+    [DataRow("567.89k ISK", "567890")]
+    [DataRow("999.99k ISK", "999990")]
+    [DataRow("1.00m ISK", "1000000")]
+    [DataRow("1.00m ISK", "1001000")]
+    [DataRow("1.01m ISK", "1010000")]
+    [DataRow("1.10m ISK", "1100000")]
+    [DataRow("1.99m ISK", "1990000")]
+    [DataRow("2.00m ISK", "1999000")]
+    [DataRow("9.99m ISK", "9990000")]
+    [DataRow("10.00m ISK", "9999999")]
+    [DataRow("10.00m ISK", "10000000")]
+    [DataRow("10.00m ISK", "10001000")]
+    [DataRow("99.99m ISK", "99990000")]
+    [DataRow("100.00m ISK", "99999999")]
+    [DataRow("100.00m ISK", "100000000")]
+    [DataRow("100.00m ISK", "100001000")]
+    [DataRow("234.56m ISK", "234560000")]
+    [DataRow("999.99m ISK", "999990000")]
+    [DataRow("1.00b ISK", "1000000000")]
+    [DataRow("1.00b ISK", "1001000000")]
+    [DataRow("1.01b ISK", "1010000000")]
+    [DataRow("1.10b ISK", "1100000000")]
+    [DataRow("1.99b ISK", "1990000000")]
+    [DataRow("2.00b ISK", "1999000000")]
+    [DataRow("9.99b ISK", "9990000000")]
+    [DataRow("10.00b ISK", "9999999999")]
+    [DataRow("10.00b ISK", "10000000000")]
+    [DataRow("10.00b ISK", "10001000000")]
+    [DataRow("99.99b ISK", "99990000000")]
+    [DataRow("100.00b ISK", "99999999999")]
+    [DataRow("100.00b ISK", "100000000000")]
+    [DataRow("100.00b ISK", "100001000000")]
+    [DataRow("234.56b ISK", "234560000000")]
+    [DataRow("999.99b ISK", "999990000000")]
+    [DataRow("1.00t ISK", "1000000000000")]
+    [DataRow("1.00t ISK", "1001000000000")]
+    [DataRow("1.01t ISK", "1010000000000")]
+    [DataRow("1.10t ISK", "1100000000000")]
+    [DataRow("1.99t ISK", "1990000000000")]
+    [DataRow("2.00t ISK", "1999000000000")]
+    [DataRow("9.99t ISK", "9990000000000")]
+    [DataRow("10.00t ISK", "9999999999999")]
+    [DataRow("10.00t ISK", "10000000000000")]
+    [DataRow("10.00t ISK", "10001000000000")]
+    [DataRow("99.99t ISK", "99990000000000")]
+    [DataRow("100.00t ISK", "99999999999999")]
+    [DataRow("100.00t ISK", "100000000000000")]
+    [DataRow("100.00t ISK", "100001000000000")]
+    [DataRow("234.56t ISK", "234560000000000")]
+    [DataRow("999.99t ISK", "999990000000000")]
+    public void ToShortIsk(string expectedShortIsk, string actualIsk) {
+        decimal actualIskValue = decimal.Parse(actualIsk, CultureInfo.InvariantCulture);
+        Assert.AreEqual(expectedShortIsk, ConsoleWriter.ToShortIsk(actualIskValue, CultureInfo.InvariantCulture));
     }
 }
