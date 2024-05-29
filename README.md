@@ -17,11 +17,10 @@ The application can be configured via the `config.json` file in the same directo
 
 ```json
 {
-  "StationId": "60003760", // "60003760" for Jita IV - Moon 4 CNAP
   "BuyBrokerFee": 3.00,
   "SellBrokerFee": 3.00,
   "SellTax": 8.00,
-  "HelpMessageFormat": "full" // full, short, hide
+  "StationId": "60003760"
 }
 ```
 

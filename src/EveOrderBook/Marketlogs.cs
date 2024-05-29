@@ -4,6 +4,8 @@ namespace EveOrderBook;
 
 internal sealed class Marketlogs
 {
+    public static readonly string DefaultMarketlogsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "EVE", "logs", "Marketlogs");
+
     public readonly string SourceMarketlogsDirectory;
 
     private readonly Taxes Taxes;
@@ -20,8 +22,7 @@ internal sealed class Marketlogs
             SourceMarketlogsDirectory = sourceMarketlogsDirectory;
         }
         else {
-            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            SourceMarketlogsDirectory = Path.Combine(documentsPath, "EVE", "logs", "Marketlogs");
+            SourceMarketlogsDirectory = DefaultMarketlogsPath;
         }
 
         SourceMarketlogsWatcher = new FileSystemWatcher();
