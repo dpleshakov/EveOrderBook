@@ -19,7 +19,7 @@ jobs:
           build-mode: autobuild
 
     name: Analyze (${{ matrix.language }})
-    timeout-minutes: 360
+    timeout-minutes: 3
     permissions:
       security-events: write
       packages: read
