@@ -3,7 +3,7 @@
 namespace EveOrderBook.Tests;
 
 [TestClass()]
-public class ToShortIskTests
+public class ConsoleWriterTests
 {
     // Decimal type hasn't supported yet, see https://github.com/dotnet/runtime/issues/4525
     [TestMethod()]
