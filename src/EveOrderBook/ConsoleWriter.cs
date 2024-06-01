@@ -1,18 +1,18 @@
-﻿using System.Globalization;
-using Spectre;
-using Spectre.Console;
+﻿using Spectre.Console;
+using System.Globalization;
 
 namespace EveOrderBook;
 
 public static class ConsoleWriter
 {
     public static void Write(ProfitMargin profitMargin) {
-        Write(new ProfitMargin[] { profitMargin });
+        Write([profitMargin]);
     }
 
     public static void Write(IEnumerable<ProfitMargin> profitMargins) {
-        Table table = new Table();
-        table.Border = TableBorder.Horizontal;
+        Table table = new Table {
+            Border = TableBorder.Horizontal,
+        };
 
         table.AddColumn(new TableColumn("Quantity").RightAligned());
         table.AddColumn(new TableColumn("Margin").Centered());
