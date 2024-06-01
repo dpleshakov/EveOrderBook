@@ -5,7 +5,25 @@ namespace EveOrderBook.Tests;
 [TestClass()]
 public class ConsoleWriterTests
 {
-    private static IEnumerable<object[]> AbbreviateNumberTestData {
+    private static IEnumerable<object[]> AbbreviateNumberNegativeTestData {
+        get {
+            return [
+                [ "-1.00", -1m ],
+                [ "-999.00", -999m ],
+                [ "-1.00k", -1_000m ],
+                [ "-2.35k", -2_345m ],
+                [ "-999.00k", -999_000m ],
+                [ "-1.00m", -1_000_000m ],
+                [ "-999.00m", -999_000_000m ],
+                [ "-1.00b", -1_000_000_000m ],
+                [ "-999.00b", -999_000_000_000m ],
+                [ "-1.00t", -1_000_000_000_000m ],
+                [ "-1,000.00t", -1_000_000_000_000_000m ],
+            ];
+        }
+    }
+
+    private static IEnumerable<object[]> AbbreviateNumberPositiveTestData {
         get {
             return [
                 [ "0.00", 0m ],
@@ -79,14 +97,16 @@ public class ConsoleWriterTests
                 [ "100.00t", 100_001_000_000_000m ],
                 [ "234.56t", 234_560_000_000_000m ],
                 [ "999.99t", 999_990_000_000_000m ],
+                [ "1,000.00t", 1_000_000_000_000_000m ],
             ];
         }
     }
 
     [TestMethod()]
-    [DynamicData(nameof(AbbreviateNumberTestData))]
-    public void TestToAbbreviateNumber(string expectedAbbreviateNumber, decimal inputNumber) {
-        string actualAbbreviateNumber = ConsoleWriter.ToAbbreviateNumber(inputNumber, CultureInfo.InvariantCulture);
+    [DynamicData(nameof(AbbreviateNumberNegativeTestData))]
+    [DynamicData(nameof(AbbreviateNumberPositiveTestData))]
+    public void TestAbbreviateNumber(string expectedAbbreviateNumber, decimal inputNumber) {
+        string actualAbbreviateNumber = ConsoleWriter.AbbreviateNumber(inputNumber, CultureInfo.InvariantCulture);
         Assert.AreEqual(expectedAbbreviateNumber, actualAbbreviateNumber);
     }
 }

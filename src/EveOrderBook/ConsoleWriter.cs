@@ -28,23 +28,23 @@ public static class ConsoleWriter
 
         Console.Write($"{"Price",FirstColumnLenth}");
         Console.Write(Separator);
-        Console.Write($"{ToAbbreviateNumber(profitMargin.BuyPrice),SecondColumnLength} ISK");
+        Console.Write($"{AbbreviateNumber(profitMargin.BuyPrice),SecondColumnLength} ISK");
         Console.Write(Separator);
-        Console.Write($"{ToAbbreviateNumber(profitMargin.SellPrice),ThirdColumnLength} ISK");
+        Console.Write($"{AbbreviateNumber(profitMargin.SellPrice),ThirdColumnLength} ISK");
         Console.WriteLine();
 
         Console.Write($"{"Total",FirstColumnLenth}");
         Console.Write(Separator);
-        Console.Write($"{ToAbbreviateNumber(profitMargin.TotalBuyPrice),SecondColumnLength} ISK");
+        Console.Write($"{AbbreviateNumber(profitMargin.TotalBuyPrice),SecondColumnLength} ISK");
         Console.Write(Separator);
-        Console.Write($"{ToAbbreviateNumber(profitMargin.TotalSellPrice),ThirdColumnLength} ISK");
+        Console.Write($"{AbbreviateNumber(profitMargin.TotalSellPrice),ThirdColumnLength} ISK");
         Console.WriteLine();
 
         Console.WriteLine(new String('-', FullLength));
 
         Console.Write($"{"Profit",FirstColumnLenth}");
         Console.Write(Separator);
-        Console.Write($"{ToAbbreviateNumber(profitMargin.Profit),SecondColumnLength} ISK");
+        Console.Write($"{AbbreviateNumber(profitMargin.Profit),SecondColumnLength} ISK");
         Console.Write(Separator);
         Console.Write($"{"",ThirdColumnLength}");
         Console.WriteLine();
@@ -57,34 +57,34 @@ public static class ConsoleWriter
         Console.WriteLine();
     }
 
-    public static string ToAbbreviateNumber(decimal number) {
-        return ToAbbreviateNumber(number, CultureInfo.CurrentCulture);
+    public static string AbbreviateNumber(decimal number) {
+        return AbbreviateNumber(number, CultureInfo.CurrentCulture);
     }
 
-    public static string ToAbbreviateNumber(decimal number, CultureInfo cultureInfo) {
-        string suffix = "";
+    public static string AbbreviateNumber(decimal number, CultureInfo cultureInfo) {
+        uint magnitude = 0;
 
-        if (number >= 1_000m && number < 1_000_000m) {
-            suffix = "k";
-            number = number / 1_000m;
-        }
-        else if (number >= 1_000_000m && number < 1_000_000_000m) {
-            suffix = "m";
-            number = number / 1_000_000m;
-        }
-        else if (number >= 1_000_000_000m && number < 1_000_000_000_000m) {
-            suffix = "b";
-            number = number / 1_000_000_000m;
-        }
-        else if (number >= 1_000_000_000_000m) {
-            suffix = "t";
-            number = number / 1_000_000_000_000m;
+        if (number != 0) {
+            decimal absoluteNumber = Math.Abs(number);
+
+            magnitude = (uint)(Math.Log10((double)absoluteNumber) / 3);
+
+            // Any value larger than one trillion will be appended with 't'.
+            magnitude = magnitude > 4 ? 4 : magnitude;
         }
 
-        string numberShortForm = number.ToString("N2", cultureInfo);
-        string result = $"{numberShortForm}{suffix}";
+        string suffix = magnitude switch {
+            0 => "",   // No suffix for values under one thousand.
+            1 => "k",  // 'k' for thousand.
+            2 => "m",  // 'm' for million.
+            3 => "b",  // 'b' for billion.
+            _ => "t",  // 't' for trillion and above.
+        };
 
-        return result;
+        decimal divisor = Convert.ToDecimal(Math.Pow(10, magnitude * 3));
+        decimal abbreviatedNumber = number / divisor;
+        
+        return abbreviatedNumber.ToString("N2", cultureInfo) + suffix;
     }
 
     private static void WriteProfitMargin(decimal marginAmount, uint lenght) {
