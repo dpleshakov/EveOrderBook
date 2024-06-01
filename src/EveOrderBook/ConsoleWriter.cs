@@ -28,23 +28,23 @@ public static class ConsoleWriter
 
         Console.Write($"{"Price",FirstColumnLenth}");
         Console.Write(Separator);
-        Console.Write($"{ToShortIsk(profitMargin.BuyPrice),SecondColumnLength}");
+        Console.Write($"{ToAbbreviateNumber(profitMargin.BuyPrice),SecondColumnLength} ISK");
         Console.Write(Separator);
-        Console.Write($"{ToShortIsk(profitMargin.SellPrice),ThirdColumnLength}");
+        Console.Write($"{ToAbbreviateNumber(profitMargin.SellPrice),ThirdColumnLength} ISK");
         Console.WriteLine();
 
         Console.Write($"{"Total",FirstColumnLenth}");
         Console.Write(Separator);
-        Console.Write($"{ToShortIsk(profitMargin.TotalBuyPrice),SecondColumnLength}");
+        Console.Write($"{ToAbbreviateNumber(profitMargin.TotalBuyPrice),SecondColumnLength} ISK");
         Console.Write(Separator);
-        Console.Write($"{ToShortIsk(profitMargin.TotalSellPrice),ThirdColumnLength}");
+        Console.Write($"{ToAbbreviateNumber(profitMargin.TotalSellPrice),ThirdColumnLength} ISK");
         Console.WriteLine();
 
         Console.WriteLine(new String('-', FullLength));
 
         Console.Write($"{"Profit",FirstColumnLenth}");
         Console.Write(Separator);
-        Console.Write($"{ToShortIsk(profitMargin.Profit),SecondColumnLength}");
+        Console.Write($"{ToAbbreviateNumber(profitMargin.Profit),SecondColumnLength} ISK");
         Console.Write(Separator);
         Console.Write($"{"",ThirdColumnLength}");
         Console.WriteLine();
@@ -57,11 +57,11 @@ public static class ConsoleWriter
         Console.WriteLine();
     }
 
-    public static string ToShortIsk(decimal number) {
-        return ToShortIsk(number, CultureInfo.CurrentCulture);
+    public static string ToAbbreviateNumber(decimal number) {
+        return ToAbbreviateNumber(number, CultureInfo.CurrentCulture);
     }
 
-    public static string ToShortIsk(decimal number, CultureInfo cultureInfo) {
+    public static string ToAbbreviateNumber(decimal number, CultureInfo cultureInfo) {
         string suffix = "";
 
         if (number >= 1_000m && number < 1_000_000m) {
@@ -82,7 +82,7 @@ public static class ConsoleWriter
         }
 
         string numberShortForm = number.ToString("N2", cultureInfo);
-        string result = $"{numberShortForm}{suffix} ISK";
+        string result = $"{numberShortForm}{suffix}";
 
         return result;
     }
