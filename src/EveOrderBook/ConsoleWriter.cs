@@ -69,7 +69,7 @@ public static class ConsoleWriter
 
             magnitude = (uint)(Math.Log10((double)absoluteNumber) / 3);
 
-            // Any value larger than one trillion will be appended with 't'.
+            // Limit the magnitude to prevent exceeding 't' suffix.
             magnitude = magnitude > 4 ? 4 : magnitude;
         }
 
