@@ -1,60 +1,39 @@
 ﻿using System.Globalization;
+using Spectre;
+using Spectre.Console;
 
 namespace EveOrderBook;
 
 public static class ConsoleWriter
 {
-    private const int FirstColumnLenth = 8;
-
-    private const int SecondColumnLength = 12;
-
-    private const int ThirdColumnLength = 12;
-
-    private const string Separator = " | ";
-
-    private readonly static int FullLength = FirstColumnLenth + SecondColumnLength + ThirdColumnLength + Separator.Length * 2;
-
     public static void Write(ProfitMargin profitMargin) {
-        Console.WriteLine(new String('-', FullLength));
+        Write(new ProfitMargin[] { profitMargin });
+    }
 
-        Console.Write($"{"",FirstColumnLenth}");
-        Console.Write(Separator);
-        Console.Write($"{"Buy",SecondColumnLength}");
-        Console.Write(Separator);
-        Console.Write($"{"Sell",ThirdColumnLength}");
-        Console.WriteLine();
+    public static void Write(IEnumerable<ProfitMargin> profitMargins) {
+        Table table = new Table();
+        table.Border = TableBorder.Horizontal;
 
-        Console.WriteLine(new String('-', FullLength));
+        table.AddColumn(new TableColumn("Quantity").RightAligned());
+        table.AddColumn(new TableColumn("Margin").Centered());
+        table.AddColumn(new TableColumn("Profit").RightAligned());
+        table.AddColumn(new TableColumn("Buy Price").RightAligned());
+        table.AddColumn(new TableColumn("Buy Total").RightAligned());
+        table.AddColumn(new TableColumn("Sell Price").RightAligned());
+        table.AddColumn(new TableColumn("Sell Total").RightAligned());
 
-        Console.Write($"{"Price",FirstColumnLenth}");
-        Console.Write(Separator);
-        Console.Write($"{AbbreviateNumber(profitMargin.BuyPrice),SecondColumnLength} ISK");
-        Console.Write(Separator);
-        Console.Write($"{AbbreviateNumber(profitMargin.SellPrice),ThirdColumnLength} ISK");
-        Console.WriteLine();
+        foreach (ProfitMargin profitMargin in profitMargins) {
+            table.AddRow(
+                profitMargin.Quantity.ToString("N0"),
+                FormatProfitMargin(profitMargin.Margin, profitMargin.Ratio),
+                AbbreviateNumber(profitMargin.Profit) + " ISK",
+                AbbreviateNumber(profitMargin.BuyPrice) + " ISK",
+                AbbreviateNumber(profitMargin.TotalBuyPrice) + " ISK",
+                AbbreviateNumber(profitMargin.SellPrice) + " ISK",
+                AbbreviateNumber(profitMargin.TotalSellPrice) + " ISK");
+        }
 
-        Console.Write($"{"Total",FirstColumnLenth}");
-        Console.Write(Separator);
-        Console.Write($"{AbbreviateNumber(profitMargin.TotalBuyPrice),SecondColumnLength} ISK");
-        Console.Write(Separator);
-        Console.Write($"{AbbreviateNumber(profitMargin.TotalSellPrice),ThirdColumnLength} ISK");
-        Console.WriteLine();
-
-        Console.WriteLine(new String('-', FullLength));
-
-        Console.Write($"{"Profit",FirstColumnLenth}");
-        Console.Write(Separator);
-        Console.Write($"{AbbreviateNumber(profitMargin.Profit),SecondColumnLength} ISK");
-        Console.Write(Separator);
-        Console.Write($"{"",ThirdColumnLength}");
-        Console.WriteLine();
-
-        Console.Write($"{"Margin",FirstColumnLenth}");
-        Console.Write(Separator);
-        WriteProfitMargin(profitMargin.Margin, SecondColumnLength);
-        Console.Write(Separator);
-        Console.Write($"{"",ThirdColumnLength}");
-        Console.WriteLine();
+        AnsiConsole.Write(table);
     }
 
     public static string AbbreviateNumber(decimal number) {
@@ -83,28 +62,20 @@ public static class ConsoleWriter
 
         decimal divisor = Convert.ToDecimal(Math.Pow(10, magnitude * 3));
         decimal abbreviatedNumber = number / divisor;
-        
+
         return abbreviatedNumber.ToString("N2", cultureInfo) + suffix;
     }
 
-    private static void WriteProfitMargin(decimal marginAmount, uint lenght) {
-        ConsoleColor defaultColor = Console.ForegroundColor;
+    public static string FormatProfitMargin(decimal margin, ProfitMarginRatio ratio) {
+        string color = ratio switch {
+            ProfitMarginRatio.Bad => "red",
+            ProfitMarginRatio.Normal => "yellow",
+            ProfitMarginRatio.Good => "green",
+            ProfitMarginRatio.VeryGood => "lime",
+            _ => "red", // Default to red if ratio is not recognized.
+        };
 
-        if (marginAmount <= 0m) {
-            Console.ForegroundColor = ConsoleColor.Red;
-        }
-        else if (marginAmount > 0m && marginAmount <= 10m) {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-        }
-        else if (marginAmount > 10m && marginAmount <= 20m) {
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-        }
-        else {
-            Console.ForegroundColor = ConsoleColor.Green;
-        }
-
-        Console.Write($"{marginAmount,ThirdColumnLength-1:#,##0.00}%");
-
-        Console.ForegroundColor = defaultColor;
+        string markdownMargin = $"[{color}]{margin:#,##0.00}%[/]";
+        return markdownMargin;
     }
 }

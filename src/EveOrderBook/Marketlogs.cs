@@ -56,14 +56,17 @@ internal sealed class Marketlogs
         MarketOrder topBuyOrder = buyOrders.OrderByDescending(order => order.Price).First();
         MarketOrder topSellOrder = sellOrders.OrderBy(order => order.Price).First();
 
-        Console.Clear();
+        
 
-        {
-            ProfitMargin margin = ProfitMarginCalculator.Calculate(topBuyOrder.Price, topSellOrder.Price, quantity: 1, Taxes);
+        List<ProfitMargin> profitMargins = new List<ProfitMargin>();
 
-            Console.WriteLine("Top order, 1 quantity");
-            ConsoleWriter.Write(margin);
+        foreach (uint quantity in new[] {1, 10, 100, 1_000, 10_000, 100_000 }) {
+            ProfitMargin margin = ProfitMarginCalculator.Calculate(topBuyOrder.Price, topSellOrder.Price, quantity: quantity, Taxes);
+            profitMargins.Add(margin);
         }
+
+        Console.Clear();
+        ConsoleWriter.Write(profitMargins);
     }
 
     private IEnumerable<MarketOrder> FilterBuyOrders(IEnumerable<MarketOrder> orders) {
