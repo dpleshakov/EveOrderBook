@@ -25,11 +25,11 @@ internal sealed class Marketlogs
             SourceMarketlogsDirectory = DefaultMarketlogsPath;
         }
 
-        SourceMarketlogsWatcher = new FileSystemWatcher();
-
-        SourceMarketlogsWatcher.Path = SourceMarketlogsDirectory;
-        SourceMarketlogsWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-        SourceMarketlogsWatcher.Filter = "*.txt";
+        SourceMarketlogsWatcher = new FileSystemWatcher {
+            Path = SourceMarketlogsDirectory,
+            NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+            Filter = "*.txt",
+        };
 
         SourceMarketlogsWatcher.Created += new FileSystemEventHandler(OnChanged);
     }
@@ -56,14 +56,15 @@ internal sealed class Marketlogs
         MarketOrder topBuyOrder = buyOrders.OrderByDescending(order => order.Price).First();
         MarketOrder topSellOrder = sellOrders.OrderBy(order => order.Price).First();
 
-        Console.Clear();
+        List<ProfitMargin> profitMargins = [];
 
-        {
-            ProfitMargin margin = ProfitMarginCalculator.Calculate(topBuyOrder.Price, topSellOrder.Price, quantity: 1, Taxes);
-
-            Console.WriteLine("Top order, 1 quantity");
-            ConsoleWriter.Write(margin);
+        foreach (uint quantity in new uint[] { 1, 10, 100, 1_000, 10_000, 100_000 }) {
+            ProfitMargin margin = ProfitMarginCalculator.Calculate(topBuyOrder.Price, topSellOrder.Price, quantity: quantity, Taxes);
+            profitMargins.Add(margin);
         }
+
+        Console.Clear();
+        ConsoleWriter.Write(profitMargins);
     }
 
     private IEnumerable<MarketOrder> FilterBuyOrders(IEnumerable<MarketOrder> orders) {
